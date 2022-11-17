@@ -6,33 +6,40 @@
   <body>
     <a-scene>
      
-      <a-sky color="#ECECEC"></a-sky>
+      <a-sky color="#32a852"></a-sky>
 
           <a-assets>
 
               <a-asset-item id="potion_stand-obj" src="assets/potion_stand.obj"></a-asset-item> 
+
+              
+
               <a-asset-item id="potion_stand-mtl" src="assets/potion_stand.mtl"></a-asset-item>
 
               
-              
-              <a-asset-item id="rollercoaster-obj" src="assets/rollercoaster.obj"></a-asset-item>
-              <a-asset-item id="rollercoaster-mtl" src="assets/rollercoaster.mtl"></a-asset-item>
 
               
-              <a-asset-item id="cardppl-gltf" src="assets/cardppl.gltf"></a-asset-item>  
+              <a-asset-item id="scene_1-glb" src="assets/scene_1.glb"></a-asset-item>  
 
           </a-assets>
 
-             <a-entity obj-model="obj: #rollercoaster-obj; mtl: #rollercoaster-mtl"></a-entity>
+             
 
-            <a-entity position="10 -5 30" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
+            <a-entity position="-250 -5 0" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
+            <a-entity position="-250 -5 100" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
+            <a-entity position="-250 -5 200" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
+            <a-entity position="-250 -5 300" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
+            <a-entity position="-250 -5 400" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
+            <a-entity position="-250 -5 500" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
+            <a-entity position="-250 -5 600" obj-model="obj: #potion_stand-obj; mtl: #potion_stand-mtl" ></a-entity>
 
-            <!-- <a-entity scale="3 3 3" position="0 -10 0" gltf-model="#cardppl-gltf"> </a-entity> -->
+           
+            <a-entity scale="3 3 3" position="0 -10 0" gltf-model="#scene_1-glb"> </a-entity>
 
-            <a-entity position="3 3 3" gltf-model="gltf: #cardppl-gltf" color="#EF2D5E"></a-entity> 
+         
 
-            <a-entity id="rig" position="0 -5 20" movement-controls="fly: true; speed: 0.3"> 
-                    <a-entity id="camera" camera wasd-controls look-controls></a-entity>
+            <a-entity id="rig" position="0 5 0" movement-controls="fly: true; speed: 0.3"> 
+                    <a-entity id="camera" camera wasd-controls="acceleration:200" look-controls></a-entity>
             </a-entity>
     </a-scene>
     
