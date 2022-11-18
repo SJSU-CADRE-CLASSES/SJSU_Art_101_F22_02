@@ -1,0 +1,117 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-web-portals@1.0.1/dist/aframe-web-portals.umd.js"></script>
+  </head>
+  <body>
+    <a-scene>
+
+      <a-sky src="assets/bh1.jpeg" material="" geometry="" rotation="0 300 0" position="125 150 -435"></a-sky>
+
+    <!-- Camera Controls for VR -->
+        <a-camera id="VR" tracked-controls="controller: 0; idPrefix: OpenVR" camera="" position="0 0 0 " rotation="-25.668509221860887 154.46942156726993 0" look-controls="" wasd-controls="fly: true" tracked-controls-webvr="idPrefix: OpenVR" data-aframe-inspector-original-camera="" visible=""></a-camera>
+   
+    
+    <!--Camera-->
+         <a-entity id="player" position="0 1.6 0" camera wasd-controls="acceleration: 25" look-controls="pointerLockEnabled: false">
+
+            <a-cursor position="0 0 -.05" scale=".04 .04 .01"></a-cursor>
+
+            <!--For Collision Detection-->
+            <!-- <a-cylinder radius="0.75"></a-cylinder> -->
+         </a-entity>
+    <!--Camera END-->
+    
+      <a-sound src="assets/spacey.mp3" autoplay="true" loop="true" position="0 0 0"></a-sound>
+ 
+      <!-- <a-entity 
+       position="0 0 -20" 
+       web-portal="url:index.html; text: Home Page;"
+       disableFrame>
+      </a-entity> -->
+
+        <a-assets>
+          <a-asset-item id="ice-obj" src="assets/icecream.obj"></a-asset-item>
+          <a-asset-item id="cherry-obj" src="assets/cherry.obj" ></a-asset-item>
+        </a-assets>
+
+        <a-obj-model   
+        animation="property: position; to: 0 0 -500; dur: 3500; easing: linear; loop: true"
+        src="assets/a6.obj"
+        mtl="assets/a6.mtl">
+        </a-obj-model> 
+        
+        <a-obj-model   
+        animation="property: position; to: -25 50 -500; dur: 3000; easing: linear; loop: true"
+        src="assets/a5.obj"
+        mtl="assets/a5.mtl">
+        </a-obj-model> 
+        
+        <a-obj-model   
+        animation="property: position; to: 50 75 -900; dur: 5000; easing: linear; loop: true"
+        src="assets/s1.obj"
+        mtl="assets/s1.mtl">
+        </a-obj-model>  
+        
+        
+        <a-obj-model   
+        animation="property: position; to: 15 0 -700; dur: 4000; easing: linear; loop: true"
+        src="assets/a3.obj"
+        mtl="assets/a3.mtl">
+        </a-obj-model>
+        
+        <a-obj-model   
+        animation="property: position; to: -50 50 -400; dur: 2000; easing: linear; loop: true"
+        src="assets/a5.obj"
+        mtl="assets/a5.mtl">
+        </a-obj-model>  
+        
+        <a-entity rotation="0 0 0" animation="property: rotation; to: 0 0 360; loop: true; dur: 5000">
+        <a-obj-model position="5 0 -100" src="assets/s2obj.obj" color="yellow" material="" obj-model=""> </a-obj-model>
+        </a-entity>
+        
+        
+        <a-entity rotation="0 0 1080" animation="property: rotation; to: 0 0 0; loop: true; dur: 8000">
+        <a-obj-model position="5 0 -50" src="assets/s3.obj" color="yellow" material="" obj-model=""> </a-obj-model>
+        </a-entity>
+        
+        <a-obj-model 
+        scale="0.7 0.7 0.7"
+        rotate="0 0 0"
+        position="-10.263 2.894 -73.965"
+        animation="property: rotation; to: 360 0 360; loop: true; dur: 10000"
+        src="assets/a3.obj"
+        color="yellow" >
+        </a-obj-model> 
+        
+        <a-entity rotation="0 0 0" animation="property: rotation; to: 0 0 1620; loop: true; dur: 12000">
+        <a-obj-model position="5 0 -200" src="assets/s2obj.obj" color="yellow" material="" obj-model=""> </a-obj-model>
+        </a-entity> 
+        
+        
+        <a-obj-model 
+        rotate="0 0 0"
+        position="2.263 0 -35.965"
+        animation="property: rotation; to: 1080 0 1080; loop: true; dur: 10000"
+        src="assets/a3.obj"
+        color="yellow" >
+        </a-obj-model> 
+
+
+        <a-mixin id="orbit" animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear;"></a-mixin>
+
+        <a-obj-model id="ice-obj" scale="" src="#ice-obj" position="0 0 12" color="#dca3a3" material="color: #dca3a3" obj-model="" animation="property: rotation; to: 0 360 0; loop: true; dur: 40000; easing: linear;">
+        </a-obj-model>
+        
+        <a-entity mixin="orbit" position="0 0 12">
+          <a-obj-model id="cherry-obj" src="#cherry-obj" position="4 1 1" radius=".8" material="color: #a21616" obj-model="" scale="0.5 0.5 0.5" animation="property: rotation; to: 0 360 360; loop: true; dur: 40000; easing: linear;"></a-obj-model>
+        </a-entity>
+
+      </a-scene>
+
+  </body>
+</html>
+
+
+
+
