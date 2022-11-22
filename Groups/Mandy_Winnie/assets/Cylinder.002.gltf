@@ -1,0 +1,161 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v3.2.43",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "extras" : {
+                "s_output" : "exporting...",
+                "b_export" : 1,
+                "export_path" : "E:\\Art101\\AFrame\\",
+                "b_interactive" : 0,
+                "b_renderer" : 1,
+                "b_settings" : 1,
+                "b_player" : 1,
+                "b_bake_lightmap" : 1,
+                "b_use_lightmapper" : 0,
+                "b_show_env_sky" : 0,
+                "f_raycast_length" : 1.0,
+                "b_cast_shadows" : 0,
+                "s_cubemap_ext" : "jpg",
+                "b_colorManagement" : 0,
+                "b_physicallyCorrectLights" : 0,
+                "b_aa" : 0,
+                "f_player_height" : 0.10000000149011612,
+                "b_raycast" : 1,
+                "b_camera_cube" : 1
+            },
+            "name" : "Scene",
+            "nodes" : [
+                0
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Cylinder.002",
+            "rotation" : [
+                0.05165773257613182,
+                -0.7052172422409058,
+                0.7052174210548401,
+                0.05165774002671242
+            ],
+            "scale" : [
+                0.09592421352863312,
+                0.2835823595523834,
+                0.09592419117689133
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "name" : "branch",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    1,
+                    0.4553719758987427,
+                    0.07496117055416107,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.4000000059604645
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Cylinder.002",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TANGENT" : 2,
+                        "TEXCOORD_0" : 3
+                    },
+                    "indices" : 4,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 36,
+            "max" : [
+                1.024533987045288,
+                1,
+                0.9864222407341003
+            ],
+            "min" : [
+                -0.9455845952033997,
+                -1,
+                -0.9831163287162781
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 36,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 36,
+            "type" : "VEC4"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5126,
+            "count" : 36,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5123,
+            "count" : 48,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 432,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 432,
+            "byteOffset" : 432
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 576,
+            "byteOffset" : 864
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 288,
+            "byteOffset" : 1440
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 96,
+            "byteOffset" : 1728
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 1824,
+            "uri" : "data:application/octet-stream;base64,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"
+        }
+    ]
+}
