@@ -51,10 +51,15 @@
 						scene.environment = texture;
 						render();
 						const loader = new GLTFLoader();
-						loader.load( 'shiney.glb', function ( gltf ) {
+						loader.load( 'res/gltf/mainScene.glb', function ( gltf ) {
 							scene.add( gltf.scene );
 							render();
 						} );
+
+                        loader.load( 'res/gltf/light.glb', function ( gltf ) {
+                            scene.add( gltf.scene );
+                            render();
+                        })
 					} );
 
                     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -81,17 +86,12 @@
                     controls = new OrbitControls( camera, renderer.domElement );
                     controls.addEventListener( 'change', render ); // use if there is no animation loop
                     controls.minDistance = 2;
-                    controls.maxDistance = 10;
+                    controls.maxDistance = 1000;
                     controls.target.set( 0, 0, - 0.2 );
                     controls.autoRotate = true;
                     controls.autoRotateSpeed = 0.5;
 
                     window.addEventListener( 'resize', onWindowResize );
-
-                geometry = new THREE.BoxGeometry( 1, 1, 1 );
-                material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-                cube = new THREE.Mesh( geometry, material );
-                scene.add( cube );
             } 
             
             function onWindowResize() {
