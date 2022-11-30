@@ -37,6 +37,24 @@
             init();
             animate();
 
+            //create audioListerner and add it to camera
+            const listener = new Three .AudioListener();
+            camera.add (listener);
+
+            //create audioLoader to load all sound files
+            const audioLoader = new Three.AudioLoader();
+
+            //create, load, and play background music
+            const backgroundSound = new THREE.Audio (listener);
+            
+            //load sound file
+            audioLoader.load('sound/streetniuse3.wav', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(0.5);
+                backgroundSound.play();
+            });
+
             function init(){
                 scene = new THREE.Scene();
                 camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
