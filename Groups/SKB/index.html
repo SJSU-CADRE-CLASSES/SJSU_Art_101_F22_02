@@ -42,18 +42,18 @@
 		  });
 		}
   
-	  	import * as THREE from './node_modules/three/build/three.module.js';
-		import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-		//import { OBJLoader } from './node_modules/three/examples/jsm/loaders/OBJLoader.js';
+	  	// import * as THREE from './node_modules/three/build/three.module.js';
+		// import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+		// //import { OBJLoader } from './node_modules/three/examples/jsm/loaders/OBJLoader.js';
 		import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-		import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader.js';
+		// import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader.js';
         
-		import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
-		import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
-		import { AfterimagePass } from './node_modules/three/examples/jsm/postprocessing/AfterimagePass.js';
-		import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+		// import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
+		// import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
+		// import { AfterimagePass } from './node_modules/three/examples/jsm/postprocessing/AfterimagePass.js';
+		// import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 	  
-        import { GUI } from './node_modules/three/examples/jsm/libs/lil-gui.module.min.js';
+        // import { GUI } from './node_modules/three/examples/jsm/libs/lil-gui.module.min.js';
 
 		let container;
 		let camera, scene, renderer, composer;
@@ -70,7 +70,7 @@
         };
 		
 		init();
-		animate();
+		// animate();
 
 		function init() {
 			scene = new THREE.Scene();
@@ -145,14 +145,6 @@
 		function onDocumentMouseMove( event ) {
 			mouseX = ( event.clientX - windowHalfX ) / 2;
 			mouseY = ( event.clientY - windowHalfY ) / 2;
-		}
-
-		function animate() {
-			requestAnimationFrame( animate );
-            controls.update();
-			composer.render();
-			bloomPass.strength = E40*30.0;
-			//camera.position.x = F41;
 		}
 
 		function render() {
