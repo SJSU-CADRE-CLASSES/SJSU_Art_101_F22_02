@@ -89,7 +89,7 @@
 			// camera.add( pointLight );
 
 			new RGBELoader()
-					.load( 'texture.hdr', function ( texture ) {
+					// .load( 'texture.hdr', function ( texture ) {
 						texture.mapping = THREE.EquirectangularReflectionMapping;
 						scene.background = texture;
 						scene.environment = texture;
@@ -99,7 +99,7 @@
 							scene.add( gltf.scene );
 							render();
 						} );
-					} );
+					// } );
 		
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
