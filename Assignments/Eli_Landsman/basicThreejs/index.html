@@ -54,7 +54,6 @@
 						loader.load( 'Planets.glb', function ( gltf ) {
 							scene.add( gltf.scene );
                             loader.scale.set( 30, 30, 30);
-                            scene.scale (30, 30, 30);
 							render();
 						} );
 					} );
@@ -117,6 +116,7 @@
                 cube.rotation.x += 0.01;
                 cube.rotation.y += 0.01;
 
+                loader.setSize.
             }
 
             function render() {
