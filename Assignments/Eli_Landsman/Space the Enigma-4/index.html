@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Space the Enigma</title>
+		<meta charset="utf-8">
+		<meta name="generator" content="Three.js Editor">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: sans-serif;
+				font-size: 11px;
+				background-color: #000;
+				margin: 0px;
+			}
+			canvas {
+				display: block;
+			}
+		</style>
+	</head>
+	<body ontouchstart="">
+		<script type="module">
+
+			import * as THREE from './js/three.module.js';
+			import { APP } from './js/app.js';
+			import { VRButton } from './js/VRButton.js';
+
+			window.THREE = THREE; // Used by APP Scripts.
+			window.VRButton = VRButton; // Used by APP Scripts.
+
+			var loader = new THREE.FileLoader();
+			loader.load( 'app.json', function ( text ) {
+
+				var player = new APP.Player();
+				player.load( JSON.parse( text ) );
+				player.setSize( window.innerWidth, window.innerHeight );
+				player.play();
+
+				document.body.appendChild( player.dom );
+
+				window.addEventListener( 'resize', function () {
+
+					player.setSize( window.innerWidth, window.innerHeight );
+
+				} );
+
+			} );
+
+			let button = document.createElement( 'a' );
+			button.href = 'https://threejs.org/editor/#file=' + location.href.split( '/' ).slice( 0, - 1 ).join( '/' ) + '/app.json';
+			button.style.cssText = 'position: absolute; bottom: 20px; right: 20px; padding: 10px 16px; color: #fff; border: 1px solid #fff; border-radius: 20px; text-decoration: none;';
+			button.target = '_blank';
+			button.textContent = 'EDIT';
+			document.body.appendChild( button );
+		</script>
+
+		<script type="module">
+
+			import * as THREE from 'three';
+
+			import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+			let camera, scene, renderer, controls;
+
+			const objects = [];
+
+			let raycaster;
+
+			let moveForward = false;
+			let moveBackward = false;
+			let moveLeft = false;
+			let moveRight = false;
+			let canJump = false;
+
+			let prevTime = performance.now();
+			const velocity = new THREE.Vector3();
+			const direction = new THREE.Vector3();
+			const vertex = new THREE.Vector3();
+			const color = new THREE.Color();
+
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+				camera.position.y = 10;
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.( 0xffffff );
+				scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
+
+				const light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
+				light.position.set( 0.5, 1, 0.75 );
+				scene.add( light );
+
+				controls = new PointerLockControls( camera, document.body );
+
+				const blocker = document.getElementById( 'blocker' );
+				const instructions = document.getElementById( 'instructions' );
+
+				instructions.addEventListener( 'click', function () {
+
+					controls.lock();
+
+				} );
+
+				controls.addEventListener( 'lock', function () {
+
+					instructions.style.display = 'none';
+					blocker.style.display = 'none';
+
+				} );
+
+				controls.addEventListener( 'unlock', function () {
+
+					blocker.style.display = 'block';
+					instructions.style.display = '';
+
+				} );
+
+				scene.add( controls.getObject() );
+
+				const onKeyDown = function ( event ) {
+
+					switch ( event.code ) {
+
+						case 'ArrowUp':
+						case 'KeyW':
+							moveForward = true;
+							break;
+
+						case 'ArrowLeft':
+						case 'KeyA':
+							moveLeft = true;
+							break;
+
+						case 'ArrowDown':
+						case 'KeyS':
+							moveBackward = true;
+							break;
+
+						case 'ArrowRight':
+						case 'KeyD':
+							moveRight = true;
+							break;
+
+						case 'Space':
+							if ( canJump === true ) velocity.y += 350;
+							canJump = false;
+							break;
+
+					}
+
+				};
+
+				const onKeyUp = function ( event ) {
+
+					switch ( event.code ) {
+
+						case 'ArrowUp':
+						case 'KeyW':
+							moveForward = false;
+							break;
+
+						case 'ArrowLeft':
+						case 'KeyA':
+							moveLeft = false;
+							break;
+
+						case 'ArrowDown':
+						case 'KeyS':
+							moveBackward = false;
+							break;
+
+						case 'ArrowRight':
+						case 'KeyD':
+							moveRight = false;
+							break;
+
+					}
+
+				};
+
+				document.addEventListener( 'keydown', onKeyDown );
+				document.addEventListener( 'keyup', onKeyUp );
+
+				raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
+
+				// floor
+
+				let floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 100, 100 );
+				floorGeometry.rotateX( - Math.PI / 2 );
+
+				// vertex displacement
+
+				let position = floorGeometry.attributes.position;
+
+				for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+					vertex.fromBufferAttribute( position, i );
+
+					vertex.x += Math.random() * 20 - 10;
+					vertex.y += Math.random() * 2;
+					vertex.z += Math.random() * 20 - 10;
+
+					position.setXYZ( i, vertex.x, vertex.y, vertex.z );
+
+				}
+
+				floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
+
+				position = floorGeometry.attributes.position;
+				const colorsFloor = [];
+
+				for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+					color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+					colorsFloor.push( color.r, color.g, color.b );
+
+				}
+
+				floorGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsFloor, 3 ) );
+
+				const floorMaterial = new THREE.MeshBasicMaterial( { vertexColors: true } );
+
+				const floor = new THREE.Mesh( floorGeometry, floorMaterial );
+				scene.add( floor );
+
+				// objects
+
+				const boxGeometry = new THREE.BoxGeometry( 20, 20, 20 ).toNonIndexed();
+
+				position = boxGeometry.attributes.position;
+				const colorsBox = [];
+
+				for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+					color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+					colorsBox.push( color.r, color.g, color.b );
+
+				}
+
+				boxGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsBox, 3 ) );
+
+				for ( let i = 0; i < 500; i ++ ) {
+
+					const boxMaterial = new THREE.MeshPhongMaterial( { specular: 0xffffff, flatShading: true, vertexColors: true } );
+					boxMaterial.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+
+					const box = new THREE.Mesh( boxGeometry, boxMaterial );
+					box.position.x = Math.floor( Math.random() * 20 - 10 ) * 20;
+					box.position.y = Math.floor( Math.random() * 20 ) * 20 + 10;
+					box.position.z = Math.floor( Math.random() * 20 - 10 ) * 20;
+
+					scene.add( box );
+					objects.push( box );
+
+				}
+
+				//
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				const time = performance.now();
+
+				if ( controls.isLocked === true ) {
+
+					raycaster.ray.origin.copy( controls.getObject().position );
+					raycaster.ray.origin.y -= 10;
+
+					const intersections = raycaster.intersectObjects( objects, false );
+
+					const onObject = intersections.length > 0;
+
+					const delta = ( time - prevTime ) / 1000;
+
+					velocity.x -= velocity.x * 10.0 * delta;
+					velocity.z -= velocity.z * 10.0 * delta;
+
+					velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+					direction.z = Number( moveForward ) - Number( moveBackward );
+					direction.x = Number( moveRight ) - Number( moveLeft );
+					direction.normalize(); // this ensures consistent movements in all directions
+
+					if ( moveForward || moveBackward ) velocity.z -= direction.z * 400.0 * delta;
+					if ( moveLeft || moveRight ) velocity.x -= direction.x * 400.0 * delta;
+
+					if ( onObject === true ) {
+
+						velocity.y = Math.max( 0, velocity.y );
+						canJump = true;
+
+					}
+
+					controls.moveRight( - velocity.x * delta );
+					controls.moveForward( - velocity.z * delta );
+
+					controls.getObject().position.y += ( velocity.y * delta ); // new behavior
+
+					if ( controls.getObject().position.y < 10 ) {
+
+						velocity.y = 0;
+						controls.getObject().position.y = 10;
+
+						canJump = true;
+
+					}
+
+				}
+
+				prevTime = time;
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+<script type="module">
+	import {WebXRButton} from './js/util/webxr-button.js';
+	import {Scene} from './js/render/scenes/scene.js';
+	import {Renderer, createWebGLContext} from './js/render/core/renderer.js';
+	import {Gltf2Node} from './js/render/nodes/gltf2.js';
+	import {SkyboxNode} from './js/render/nodes/skybox.js';
+	import {mat4, vec3, quat} from './js/render/math/gl-matrix.js';
+	import {QueryArgs} from './js/util/query-args.js';
+
+	// If requested, use the polyfill to provide support for mobile devices
+	// and devices which only support WebVR.
+	import WebXRPolyfill from './js/third-party/webxr-polyfill/build/webxr-polyfill.module.js';
+	if (QueryArgs.getBool('usePolyfill', true)) {
+	  let polyfill = new WebXRPolyfill();
+	}
+
+	// Inline sessions, by default, us a vertical field of view of 90 degrees
+	// when computing projection matrices. If an application wants to use a
+	// different FoV for inline sessions it can be specified by setting the
+	// inlineVerticalFieldOfView value in an updateRenderState call. Note that
+	// this only applies to inline sessions, and attempting to set that value
+	// for an immersive session will throw an error.
+	let inlineSession = null;
+	let fov = document.getElementById('vertFOV');
+	let fovLabel = document.getElementById('vertFOVLabel');
+	function updateFov() {
+	  let value = parseFloat(fov.value);
+	  // The inlineVerticalFieldOfView is specified in radians.
+	  let radValue = value * (Math.PI / 180);
+
+	  if (inlineSession) {
+		// As with any values set with updateRenderState, this will take
+		// effect on the next frame.
+		inlineSession.updateRenderState({
+		  inlineVerticalFieldOfView: radValue
+		});
+	  }
+	  
+	  // Set the label on the page
+	  let label = `Vertical FOV: ${value} degrees`;
+	  if (value == 90) {
+		label += ' (default)';
+	  }
+	  fovLabel.textContent = label;
+	}
+	fov.addEventListener('change', updateFov);
+
+	// XR globals.
+	let xrButton = null;
+	let xrImmersiveRefSpace = null;
+	let xrInlineRefSpace = null;
+
+	// WebGL scene globals.
+	let gl = null;
+	let renderer = null;
+	let scene = new Scene();
+	let solarSystem = new Gltf2Node({url: 'media/gltf/space/space.gltf'});
+	scene.addNode(solarSystem);
+	scene.addNode(new SkyboxNode({url: 'media/textures/milky-way-4k.png'}));
+
+	function initXR() {
+	  xrButton = new WebXRButton({
+		onRequestSession: onRequestSession,
+		onEndSession: onEndSession
+	  });
+	  document.querySelector('header').appendChild(xrButton.domElement);
+
+	  if (navigator.xr) {
+		navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+		  xrButton.enabled = supported;
+		});
+
+		// Start up an inline session, which should always be supported on
+		// browsers that support WebXR regardless of the available hardware.
+		navigator.xr.requestSession('inline').then((session) => {
+		  inlineSession = session;
+		  onSessionStarted(session);
+		  updateFov();
+		});
+	  }
+	}
+
+	function onRequestSession() {
+	  return navigator.xr.requestSession('immersive-vr').then((session) => {
+		xrButton.setSession(session);
+		// Set a flag on the session so we can differentiate it from the
+		// inline session.
+		session.isImmersive = true;
+		onSessionStarted(session);
+	  });
+	}
+
+	function onSessionStarted(session) {
+	  session.addEventListener('end', onSessionEnded);
+
+	  if (!gl) {
+		gl = createWebGLContext({
+		  xrCompatible: true
+		});
+
+		// In order for an inline session to be used we must attach the WebGL
+		// canvas to the document, which will serve as the output surface for
+		// the results of the inline session's rendering.
+		document.body.appendChild(gl.canvas);
+		
+		// The canvas is synced with the window size via CSS, but we still
+		// need to update the width and height attributes in order to keep
+		// the default framebuffer resolution in-sync.
+		function onResize() {
+		  gl.canvas.width = gl.canvas.clientWidth * window.devicePixelRatio;
+		  gl.canvas.height = gl.canvas.clientHeight * window.devicePixelRatio;
+		}
+		window.addEventListener('resize', onResize);
+		onResize();
+
+		// Installs the listeners necessary to allow users to look around with
+		// inline sessions using the mouse or touch.
+		addInlineViewListeners(gl.canvas);
+
+		renderer = new Renderer(gl);
+
+		scene.setRenderer(renderer);
+	  }
+	  
+	  // WebGL layers for inline sessions won't allocate their own framebuffer,
+	  // which causes gl commands to naturally execute against the default
+	  // framebuffer while still using the canvas dimensions to compute
+	  // viewports and projection matrices.
+	  let glLayer = new XRWebGLLayer(session, gl);
+
+	  session.updateRenderState({
+		baseLayer: glLayer
+	  });
+
+	  let refSpaceType = session.isImmersive ? 'local' : 'viewer';
+	  session.requestReferenceSpace(refSpaceType).then((refSpace) => {
+		// Since we're dealing with multiple sessions now we need to track
+		// which XRReferenceSpace is associated with which XRSession.
+		if (session.isImmersive) {
+		  xrImmersiveRefSpace = refSpace;
+		} else {
+		  xrInlineRefSpace = refSpace;
+		}
+		session.requestAnimationFrame(onXRFrame);
+	  });
+	}
+
+	function onEndSession(session) {
+	  session.end();
+	}
+
+	function onSessionEnded(event) {
+	  // Only reset the button when the immersive session ends.
+	  if (event.session.isImmersive) {
+		xrButton.setSession(null);
+	  }
+	}
+
+	// Called every time a XRSession requests that a new frame be drawn.
+	function onXRFrame(t, frame) {
+	  let session = frame.session;
+	  // Ensure that we're using the right frame of reference for the session.
+	  let refSpace = session.isImmersive ?
+					   xrImmersiveRefSpace :
+					   xrInlineRefSpace;
+
+	  // Account for the click-and-drag mouse movement or touch movement when
+	  // calculating the viewer pose for inline sessions.
+	  if (!session.isImmersive) {
+		refSpace = getAdjustedRefSpace(refSpace);
+	  }
+
+	  let pose = frame.getViewerPose(refSpace);
+
+	  scene.startFrame();
+
+	  session.requestAnimationFrame(onXRFrame);
+
+	  if (pose) {
+		let glLayer = session.renderState.baseLayer;
+		gl.bindFramebuffer(gl.FRAMEBUFFER, glLayer.framebuffer);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+		for (let view of pose.views) {
+		  let viewport = glLayer.getViewport(view);
+		  gl.viewport(viewport.x, viewport.y,
+					  viewport.width, viewport.height);
+
+		  scene.draw(view.projectionMatrix, view.transform);
+		}
+	  }
+
+	  scene.endFrame();
+	}
+
+	// Inline view adjustment code
+	// Allow the user to click and drag the mouse (or touch and drag the
+	// screen on handheld devices) to adjust the viewer pose for inline
+	// sessions. Samples after this one will hide this logic with a utility
+	// class (InlineViewerHelper).
+	let lookYaw = 0;
+	let lookPitch = 0;
+	const LOOK_SPEED = 0.0025;
+
+	// XRReferenceSpace offset is immutable, so return a new reference space
+	// that has an updated orientation.
+	function getAdjustedRefSpace(refSpace) {
+	  // Represent the rotational component of the reference space as a
+	  // quaternion.
+	  let invOrientation = quat.create();
+	  quat.rotateX(invOrientation, invOrientation, -lookPitch);
+	  quat.rotateY(invOrientation, invOrientation, -lookYaw);
+	  let xform = new XRRigidTransform(
+		  {x: 0, y: 0, z: 0},
+		  {x: invOrientation[0], y: invOrientation[1], z: invOrientation[2], w: invOrientation[3]});
+	  return refSpace.getOffsetReferenceSpace(xform);
+	}
+
+	function rotateView(dx, dy) {
+	  lookYaw += dx * LOOK_SPEED;
+	  lookPitch += dy * LOOK_SPEED;
+	  if (lookPitch < -Math.PI*0.5)
+		  lookPitch = -Math.PI*0.5;
+	  if (lookPitch > Math.PI*0.5)
+		  lookPitch = Math.PI*0.5;
+	}
+
+	// Make the canvas listen for mouse and touch events so that we can
+	// adjust the viewer pose accordingly in inline sessions.
+	function addInlineViewListeners(canvas) {
+	  canvas.addEventListener('mousemove', (event) => {
+		// Only rotate when the right button is pressed
+		if (event.buttons && 2) {
+		  rotateView(event.movementX, event.movementY);
+		}
+	  });
+
+	  // Keep track of touch-related state so that users can touch and drag on
+	  // the canvas to adjust the viewer pose in an inline session.
+	  let primaryTouch = undefined;
+	  let prevTouchX = undefined;
+	  let prevTouchY = undefined;
+
+	  // Keep track of all active touches, but only use the first touch to
+	  // adjust the viewer pose.
+	  canvas.addEventListener("touchstart", (event) => {
+		if (primaryTouch == undefined) {
+		  let touch = event.changedTouches[0];
+		  primaryTouch = touch.identifier;
+		  prevTouchX = touch.pageX;
+		  prevTouchY = touch.pageY;
+		}
+	  });
+
+	  // Update the set of active touches now that one or more touches
+	  // finished. If the primary touch just finished, update the viewer pose
+	  // based on the final touch movement.
+	  canvas.addEventListener("touchend", (event) => {
+		for (let touch of event.changedTouches) {
+		  if (primaryTouch == touch.identifier) {
+			primaryTouch = undefined;
+			rotateView(touch.pageX - prevTouchX, touch.pageY - prevTouchY);
+		  }
+		}
+	  });
+
+	  // Update the set of active touches now that one or more touches was
+	  // cancelled. Don't update the viewer pose when the primary touch was
+	  // cancelled.
+	  canvas.addEventListener("touchcancel", (event) => {
+		for (let touch of event.changedTouches) {
+		  if (primaryTouch == touch.identifier) {
+			primaryTouch = undefined;
+		  }
+		}
+	  });
+
+	  // Only use the delta between the most recent and previous events for
+	  // the primary touch. Ignore the other touches.
+	  canvas.addEventListener("touchmove", (event) => {
+		for (let touch of event.changedTouches) {
+		  if (primaryTouch == touch.identifier) {
+			rotateView(touch.pageX - prevTouchX, touch.pageY - prevTouchY);
+			prevTouchX = touch.pageX;
+			prevTouchY = touch.pageY;
+		  }
+		}
+	  });
+	}
+
+	// Start the XR application.
+	initXR();
+  </script>
+	</body>
+</html>
