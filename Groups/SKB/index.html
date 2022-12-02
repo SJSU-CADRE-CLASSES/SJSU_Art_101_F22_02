@@ -100,13 +100,13 @@
 			// camera.add( pointLight );
 		}
 			new RGBELoader()
-					.load( 'texture.hdr', function ( texture ) {
+					.load( 'small_rural_road_02_8k.hdr', function ( texture ) {
 						texture.mapping = THREE.EquirectangularReflectionMapping;
 						scene.background = texture;
 						scene.environment = texture;
 						render();
 						const loader = new GLTFLoader();
-						loader.load( 'shiney.glb', function ( gltf ) {
+						loader.load( 'smunozworld1.glb', function ( gltf ) {
 							scene.add( gltf.scene );
 							render();
 						} );
