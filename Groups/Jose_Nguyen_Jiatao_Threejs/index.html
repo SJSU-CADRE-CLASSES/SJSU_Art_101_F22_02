@@ -115,9 +115,58 @@
             audioLoader.load('res/sound/streetnoise3.wav', function (buffer){
                 backgroundSound.setBuffer(buffer);
                 backgroundSound.setLoop(true);
-                backgroundSound.setVolume(0.5);
+                backgroundSound.setVolume(1.0);
                 backgroundSound.play();
             });
+           //load soundfile
+               audioLoader.load('res/sound/easter1.mp3', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(-.1);
+                backgroundSound.play();
+                });
+                    //load soundfile
+               audioLoader.load('res/sound/ac_noise.wav.mp3', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(0.4);
+                backgroundSound.play();
+                });
+                    //load soundfile
+               audioLoader.load('res/sound/bush.wav', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(0.4);
+                backgroundSound.play();
+                });
+                    //load soundfile
+               audioLoader.load('res/sound/cricketnoise.wav', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(0.4);
+                backgroundSound.play();
+                });
+                    //load soundfile
+               audioLoader.load('res/sound/lightbuzz.wav', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(0.4);
+                backgroundSound.play();
+                });
+                  //load soundfile
+               audioLoader.load('res/sound/streetnoise2.wav', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(0.4);
+                backgroundSound.play();
+                });
+                  //load soundfile
+               audioLoader.load('res/sound/streetnoise3.wav', function (buffer){
+                backgroundSound.setBuffer(buffer);
+                backgroundSound.setLoop(true);
+                backgroundSound.setVolume(0.4);
+                backgroundSound.play();
+                });
 
             function init(){
                 scene = new THREE.Scene();
