@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=UTF-8 />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <title>Fading Memories</title>
+  </head>
+  <body>
+    <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+		<script type="importmap">{"imports": {"three": "./node_modules/three/build/three.module.js","three/addons/": "./jsm/"}}</script>
+
+    <script type ="module">
+      import * as THREE from './node_modules/three/build/three.module.js';
+      import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+      import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+      
+      let scene, camera, controls, renderer, skyboxGeo, skybox, dreams=[];
+
+      let clock;
+
+      function init () {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(55,window.innerWidth / window.innerHeight,45,30000);
+        camera.position.set(120, -250, 2500);
+
+        window.addEventListener( 'resize', onWindowResize );
+      
+        renderer = new THREE.WebGLRenderer({ antialias: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.domElement.id = "canvas";
+        document.body.appendChild(renderer.domElement);
+
+        controls = new OrbitControls( camera, renderer.domElement );
+        controls.addEventListener('change', render);
+        controls.minDistance = 500;
+        controls.maxDistance = 1500;
+
+        let materialArray = [];
+        let texture_ft = new THREE.TextureLoader().load('skybox/corona_ft.png');
+        let texture_bk = new THREE.TextureLoader().load('skybox/corona_bk.png');
+        let texture_up = new THREE.TextureLoader().load('skybox/corona_up.png');
+        let texture_dn = new THREE.TextureLoader().load('skybox/corona_dn.png');
+        let texture_rt = new THREE.TextureLoader().load('skybox/corona_rt.png');
+        let texture_lf = new THREE.TextureLoader().load('skybox/corona_lf.png');
+        
+        
+        materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
+        materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
+        materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
+        materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
+        materialArray.push(new THREE.MeshBasicMaterial({map: texture_rt}));
+        materialArray.push(new THREE.MeshBasicMaterial({map: texture_lf}));
+
+        for (let i = 0; i < 6; i++)
+        materialArray[i].side = THREE.BackSide;
+   
+        let skyboxGeo = new THREE.BoxGeometry( 10000, 10000, 10000);
+        let skybox = new THREE.Mesh( skyboxGeo, materialArray );
+        scene.add( skybox );
+
+        //Lighting
+        let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+        light.position.set(20, 100, 10);
+        light.target.position.set(0, 0, 0);
+        light.castShadow = true;
+        light.shadow.bias = -0.001;
+        light.shadow.mapSize.width = 2048;
+        light.shadow.mapSize.height = 2048;
+        light.shadow.camera.near = 0.1;
+        light.shadow.camera.far = 500.0;
+        light.shadow.camera.near = 0.5;
+        light.shadow.camera.far = 500.0;
+        light.shadow.camera.left = 100;
+        light.shadow.camera.right = -100;
+        light.shadow.camera.top = 100;
+        light.shadow.camera.bottom = -100;
+        scene.add(light);
+
+        light = new THREE.AmbientLight(0xFFFFFF, 2.0);
+        scene.add(light);
+
+
+
+        //Clock Model
+        const loader = new GLTFLoader();
+        loader.load('assets/Models/retro_antique_desk_clock/scene.gltf', (gltf) => {
+          gltf.scene.traverse(c => {
+            c.castShadow = true;
+          });
+          gltf.scene.scale.set(50, 50, 50);
+          gltf.scene.position.set(0, -200, 0);
+          gltf.scene.rotation.set(0, 0, 0);
+
+          scene.add(gltf.scene);
+        });
+      }
+      
+      function Randomize() {
+      let random_number = Math.floor(Math.random() * 8);
+      return "img" + random_number + ".JPG"
+      }
+
+      function addDreams(){
+      const loader = new THREE.TextureLoader()
+        for ( var z= -1000; z < 1200; z+=20 ) {
+            var geometry  = new THREE.SphereGeometry(15, 15, 32)
+            var material = new THREE.MeshBasicMaterial( {color: 0xffffff, map: loader.load(Randomize())} );
+            var dream = new THREE.Mesh(geometry, material)
+
+
+            dream.position.x = Math.random() * 1000 - 500;
+            dream.position.y = Math.random() * 1000 - 500;
+
+
+            dream.position.z = z;
+
+
+            dream.scale.x = dream.scale.y = 3;
+
+
+            scene.add( dream );
+
+
+            dreams.push(dream);
+        }
+    }
+
+      function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		  }
+
+		  function onDocumentMouseMove( event ) {
+			mouseX = ( event.clientX - windowHalfX ) / 2;
+			mouseY = ( event.clientY - windowHalfY ) / 2;
+		  }
+
+      function animate () {
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+
+
+
+      function render() {
+        composer.render();
+		}
+
+    init();
+    addDreams();
+		animate();
+
+    </script>
+  </body>
+</html>
