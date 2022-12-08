@@ -103,70 +103,86 @@
 
             //create audioListerner and add it to camera
             const listener = new THREE.AudioListener();
-            camera.add (listener);
+                camera.add (listener);
+
+
+            //background sound
+            const streetnoise1 = new THREE.Audio (listener);
+            const streetnoise2 = new THREE.Audio (listener);
+            const streetnoise3 = new THREE.Audio (listener);
+            const ac_noise = new THREE.Audio (listener);
+            const bush = new THREE.Audio (listener);
+            //const lightbuzz = new THREE.Audio (listener);
+            const cricketsound = new THREE.Audio (listener);
+            const easter = new THREE.Audio (listener);
 
             //create audioLoader to load all sound files
             const audioLoader = new THREE.AudioLoader();
 
-            //create, load, and play background music
-            const backgroundSound = new THREE.Audio (listener);
-            
-            //load sound file
-            audioLoader.load('res/sound/streetnoise3.wav', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(1.0);
-                backgroundSound.play();
+            //Street Noise
+            audioLoader.load('res/sound/streetnoise1.wav', function (buffer){
+                streetnoise1.setBuffer(buffer);
+                streetnoise1.setLoop(true);
+                streetnoise1.setVolume(0.1);
+                streetnoise1.play();
             });
-           //load soundfile
-               audioLoader.load('res/sound/easter1.mp3', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(-.1);
-                backgroundSound.play();
-                });
-                    //load soundfile
-               audioLoader.load('res/sound/ac_noise.wav.mp3', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(0.4);
-                backgroundSound.play();
-                });
-                    //load soundfile
-               audioLoader.load('res/sound/bush.wav', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(0.4);
-                backgroundSound.play();
-                });
-                    //load soundfile
-               audioLoader.load('res/sound/cricketnoise.wav', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(0.4);
-                backgroundSound.play();
-                });
-                    //load soundfile
-               audioLoader.load('res/sound/lightbuzz.wav', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(0.4);
-                backgroundSound.play();
-                });
-                  //load soundfile
-               audioLoader.load('res/sound/streetnoise2.wav', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(0.4);
-                backgroundSound.play();
-                });
-                  //load soundfile
-               audioLoader.load('res/sound/streetnoise3.wav', function (buffer){
-                backgroundSound.setBuffer(buffer);
-                backgroundSound.setLoop(true);
-                backgroundSound.setVolume(0.4);
-                backgroundSound.play();
-                });
+            audioLoader.load('res/sound/streetnoise2.wav', function (buffer){
+                streetnoise2.setBuffer(buffer);
+                streetnoise2.setLoop(true);
+                streetnoise2.setVolume(0.1);
+                streetnoise2.play();
+            });
+            audioLoader.load('res/sound/streetnoise3.wav', function (buffer){
+                streetnoise3.setBuffer(buffer);
+                streetnoise3.setLoop(true);
+                streetnoise3.setVolume(0.1);
+                streetnoise3.play();
+            });
+
+
+            //easter
+            audioLoader.load('res/sound/easter1.mp3', function (buffer){
+                easter.setBuffer(buffer);
+                easter.setLoop(true);
+                easter.setVolume(0.02);
+                easter.play();
+            });
+
+            //ac_noise
+            audioLoader.load('res/sound/ac_noise.wav', function (buffer){
+                ac_noise.setBuffer(buffer);
+                ac_noise.setLoop(true);
+                ac_noise.setVolume(1);
+                ac_noise.play();
+            });
+
+            //load soundfile
+            audioLoader.load('res/sound/bush.wav', function (buffer){
+                bush.setBuffer(buffer);
+                bush.setLoop(true);
+                bush.setVolume(0.1);
+                bush.play();
+            });
+
+            //load soundfile
+            audioLoader.load('res/sound/cricketsound.wav', function (buffer){
+                cricketsound.setBuffer(buffer);
+                cricketsound.setLoop(true);
+                cricketsound.setVolume(0.05);
+                cricketsound.play();
+            });
+
+            // //load soundfile
+            // audioLoader.load('res/sound/lightbuzz.wav', function (buffer){
+            //     lightbuzz.setBuffer(buffer);
+            //     lightbuzz.setLoop(true);
+            //     lightbuzz.setVolume(0.3);
+            //     lightbuzz.play();
+            // });
+                        
+            
+     
+            
 
             function init(){
                 scene = new THREE.Scene();
@@ -174,6 +190,9 @@
                 camera.position.x = -37.994*3;
                 camera.position.y = 0;
                 camera.position.z = 161.481*3;
+
+                
+                
 
                 new RGBELoader()
 					.load( 'res/hdr/moonless_golf_2k.hdr', function ( texture ) {
@@ -216,6 +235,8 @@
                     
                     composer.addPass( afterimagePass );
                     composer.addPass( bloomPass );
+
+                    
 
                     //firstperson cam control
                     //from pointerlock example: https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
